@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class PointTest {
 
     @Test
-    fun `given two point - we can add them together`() {
+    fun `given two points - we can add them together`() {
         val origin = Point(0, 0)
         val vector = Point(-1, 1)
 
@@ -14,6 +14,17 @@ class PointTest {
 
         assertThat(actual).isEqualTo(Point(-1, 1))
     }
-    
 
+    @Test
+    fun `return neighbouring points of point`() {
+        val point = Point(0, 0)
+
+        val actual = point.neighbours
+
+        assertThat(actual).containsExactlyInAnyOrder(
+            Point(-1, -1), Point(0, -1), Point(1, -1),
+            Point(-1, 0), Point(1, 0),
+            Point(-1, 1), Point(0, 1), Point(1, 1)
+        )
+    }
 }
