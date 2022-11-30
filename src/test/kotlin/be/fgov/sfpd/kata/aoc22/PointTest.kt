@@ -27,4 +27,18 @@ class PointTest {
             Point(-1, 1), Point(0, 1), Point(1, 1)
         )
     }
+
+
+    @Test
+    fun `return orthogonal neighbouring points of point`() {
+        val point = Point(0, 0)
+
+        val actual = point.orthogonalNeighbours
+
+        assertThat(actual).containsExactlyInAnyOrder(
+            Point(0, -1),
+            Point(-1, 0), Point(1, 0),
+            Point(0, 1)
+        )
+    }
 }
