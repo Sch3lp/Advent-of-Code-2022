@@ -1,5 +1,7 @@
-import DepthChange.DECREASED
-import DepthChange.INCREASED
+package be.fgov.sfpd.kata.aoc22.day1
+
+import be.fgov.sfpd.kata.aoc22.day1.DepthChange.DECREASED
+import be.fgov.sfpd.kata.aoc22.day1.DepthChange.INCREASED
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
