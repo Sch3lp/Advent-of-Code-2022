@@ -15,22 +15,22 @@ class Solve {
     @Test
     fun `actual input part 1`() {
         val input = readFile("day2/input.txt")
-        assertThat(solve1(input)).isEqualTo(42)
+        assertThat(solve1(input)).isEqualTo(10404)
     }
 
     @Test
     fun `example input part 2`() {
         val input = readFile("day2/exampleInput.txt")
-        assertThat(solve2(input)).isEqualTo(42)
+        assertThat(solve2(input)).isEqualTo(12)
     }
 
     @Test
     fun `actual input part 2`() {
         val input = readFile("day2/input.txt")
-        assertThat(solve2(input)).isEqualTo(42)
+        assertThat(solve2(input)).isEqualTo(10334)
     }
 
-    private fun solve1(input: String) : Int = totalScore(input)
-    private fun solve2(input: String) : Int = totalScore(input)
+    private fun solve1(input: String) : Int = RockPaperScissors1.totalScore(input)
+    private fun solve2(input: String) : Int = RockPaperScissors2.totalScore(input)
 }
 
