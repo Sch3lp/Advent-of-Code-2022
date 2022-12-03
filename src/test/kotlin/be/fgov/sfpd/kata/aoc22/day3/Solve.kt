@@ -21,16 +21,16 @@ class Solve {
     @Test
     fun `example input part 2`() {
         val input = readFile("day3/exampleInput.txt")
-        assertThat(solve2(input)).isEqualTo(42)
+        assertThat(solve2(input)).isEqualTo(70)
     }
 
     @Test
     fun `actual input part 2`() {
         val input = readFile("day3/input.txt")
-        assertThat(solve2(input)).isEqualTo(42)
+        assertThat(solve2(input)).isEqualTo(2552)
     }
 
-    private fun solve1(input: String) : Int = input.lines().sumOf { rucksack -> rucksack.priority }
-    private fun solve2(input: String) : Int = input.lines().sumOf { rucksack -> rucksack.priority }
+    private fun solve1(input: String) : Int = Rucksacks(input).totalPriority
+    private fun solve2(input: String) : Int = Rucksacks(input).totalPriorityOfBadges
 }
 
