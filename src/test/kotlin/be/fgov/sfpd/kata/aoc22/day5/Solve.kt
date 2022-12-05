@@ -1,5 +1,7 @@
 package be.fgov.sfpd.kata.aoc22.day5
 
+import be.fgov.sfpd.kata.aoc22.day5.Parsing.parseToRearrangementProcedure
+import be.fgov.sfpd.kata.aoc22.day5.Parsing.parseToShip
 import be.fgov.sfpd.kata.aoc22.readFile
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,7 +20,7 @@ class Solve {
         assertThat(solve1(input))
             .isNotEqualTo("RHBNBHWD ")
             .isNotEqualTo("QNRMVDDR ")
-            .isEqualTo("fuck")
+            .isEqualTo("GRTSWNJHH")
     }
 
     @Test
@@ -34,15 +36,15 @@ class Solve {
     }
 
     private fun solve1(input: String): String {
-        val ship = parseToShip(input)
+        val ship = parseToShip(input, CrateMover9000)
         val procedure = parseToRearrangementProcedure(input)
-        return execute(ship, procedure, CrateMover9000).topCrates()
+        return ship.execute(procedure).topCrates()
     }
 
     private fun solve2(input: String): String {
-        val ship = parseToShip(input)
+        val ship = parseToShip(input, CrateMover9001)
         val procedure = parseToRearrangementProcedure(input)
-        return execute(ship, procedure, CrateMover9001).topCrates()
+        return ship.execute(procedure).topCrates()
     }
 }
 

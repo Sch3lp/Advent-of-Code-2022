@@ -24,8 +24,8 @@ class CargoCraneTest {
  move 1 from 1 to 2
         """.trimIndent()
 
-            val stacks = parseToShip(input)
-            assertThat(stacks).containsExactly(
+            val ship = Parsing.parseToShip(input, CrateMover9000)
+            assertThat(ship.loadingDeck).containsExactly(
                 entry(1, listOf("N", "Z")),
                 entry(2, listOf("D", "C", "M")),
                 entry(3, listOf("P")),
@@ -45,7 +45,7 @@ class CargoCraneTest {
  move 2 from 2 to 1
  move 1 from 1 to 2"""
 
-            val procedure = parseToRearrangementProcedure(input)
+            val procedure = Parsing.parseToRearrangementProcedure(input)
             assertThat(procedure).containsExactly(
                 Rearrange(1, 2, 1),
                 Rearrange(3, 1, 3),
@@ -64,7 +64,7 @@ class CargoCraneTest {
 [N] [C]    
 [Z] [M] [P]
  1   2   3"""
-            assertThat(parseToShip(shipInput).visualize()).isEqualToIgnoringWhitespace(shipInput)
+            assertThat(Parsing.parseToShip(shipInput, CrateMover9000).visualize()).isEqualToIgnoringWhitespace(shipInput)
         }
     }
 
@@ -72,20 +72,18 @@ class CargoCraneTest {
     inner class RearrangementTests {
         @Test
         fun `moving 1 crate to an empty stack`() {
-            val ship: Ship = mapOf(1 to listOf("D"), 2 to listOf())
+            val ship = Ship(mapOf(1 to listOf("D"), 2 to listOf()))
+            val actual = ship.execute(listOf(Rearrange(1, 1, 2)))
 
-            val actual: Ship = execute(ship, listOf(Rearrange(1, 1, 2)))
-
-            assertThat(actual).isEqualTo(mapOf(1 to listOf(), 2 to listOf("D")))
+            assertThat(actual).isEqualTo(Ship(mapOf(1 to listOf(), 2 to listOf("D"))))
         }
 
         @Test
         fun `moving 1 crate of an empty stack to a stack with 1 crate, moves nothing`() {
-            val map: Ship = mapOf(1 to listOf("D"), 2 to listOf())
+            val ship = Ship(mapOf(1 to listOf("D"), 2 to listOf()))
+            val actual = ship.execute(listOf(Rearrange(1, 2, 1)))
 
-            val actual: Ship = execute(map, listOf(Rearrange(1, 2, 1)))
-
-            assertThat(actual).isEqualTo(mapOf(1 to listOf("D"), 2 to listOf()))
+            assertThat(actual).isEqualTo(Ship(mapOf(1 to listOf("D"), 2 to listOf())))
         }
     }
 }
