@@ -62,7 +62,8 @@ class CargoCraneTest {
             val shipInput = """
     [D]    
 [N] [C]    
-[Z] [M] [P]"""
+[Z] [M] [P]
+ 1   2   3"""
             assertThat(parseToShip(shipInput).visualize()).isEqualToIgnoringWhitespace(shipInput)
         }
     }
@@ -93,7 +94,8 @@ fun Ship.topCrates(): String =
     map { (_, crates) -> crates.firstOrNull() ?: " " }.joinToString("")
 
 fun execute(ship: Ship, procedure: List<Rearrange>): Ship =
-    procedure.fold(ship.also { println(it.visualize()) }) { acc, rearrange ->
+    procedure.foldIndexed(ship.also { println(it.visualize()) }) { idx, acc, rearrange ->
+        println("Step: ${idx+1}")
         println("####### Moving ${rearrange.amountOfCrates} from ${rearrange.origin} to ${rearrange.destination} #######")
         val originStack = acc.getValue(rearrange.origin)
         val destinationStack = acc.getValue(rearrange.destination)
@@ -102,7 +104,7 @@ fun execute(ship: Ship, procedure: List<Rearrange>): Ship =
         acc.mapValues { (k, v) ->
             when (k) {
                 rearrange.origin -> remainingOrigin
-                rearrange.destination -> cratesInTransit.reversed() + destinationStack
+                rearrange.destination -> listOf(cratesInTransit.reversed(), destinationStack).flatten()
                 else -> v
             }
         }.also { println("\n"+it.visualize()) }
@@ -112,7 +114,7 @@ data class Rearrange(val amountOfCrates: Int, val origin: ID, val destination: I
 
 fun parseToRearrangementProcedure(input: String): List<Rearrange> {
     return input.lines().mapNotNull { line ->
-        val match = Regex(""".*move (\d) from (\d) to (\d)""").matchEntire(line)
+        val match = Regex(""".*move (\d+) from (\d) to (\d)""").matchEntire(line)
         match?.groupValues?.let { (_, amount, origin, destination) ->
             Rearrange(amount.toInt(), origin.toInt(), destination.toInt())
         }
