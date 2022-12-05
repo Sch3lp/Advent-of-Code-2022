@@ -9,13 +9,14 @@ class Solve {
     @Test
     fun `example input part 1`() {
         val input = readFile("day5/exampleInput.txt")
-        assertThat(solve1(input)).isEqualTo(2)
+        assertThat(solve1(input)).isEqualTo("CMZ")
     }
 
     @Test
     fun `actual input part 1`() {
         val input = readFile("day5/input.txt")
-        assertThat(solve1(input)).isEqualTo(496)
+        assertThat(solve1(input))
+            .isNotEqualTo("RHBNBHWD")
     }
 
     @Test
@@ -30,7 +31,9 @@ class Solve {
         assertThat(solve2(input)).isEqualTo(4)
     }
 
-    private fun solve1(input: String) : Int = TODO()
-    private fun solve2(input: String) : Int = TODO()
+    private fun solve1(input: String) : String = execute(parseToShip(input),parseToRearrangementProcedure(input)).topCrates()
+    private fun solve2(input: String) : String = TODO()
 }
+
+
 

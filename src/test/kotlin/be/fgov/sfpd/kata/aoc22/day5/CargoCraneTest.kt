@@ -24,7 +24,7 @@ class CargoCraneTest {
  move 1 from 1 to 2
         """.trimIndent()
 
-            val stacks = parseToStacks(input)
+            val stacks = parseToShip(input)
             assertThat(stacks).containsExactly(
                 entry(1, listOf("N", "Z")),
                 entry(2, listOf("D", "C", "M")),
@@ -59,34 +59,37 @@ class CargoCraneTest {
     inner class RearrangementTests {
         @Test
         fun `moving 1 crate to an empty stack`() {
-            val ship : Map<ID, Stack<Crate>> = mapOf(1 to listOf("D"), 2 to listOf())
+            val ship : Ship = mapOf(1 to listOf("D"), 2 to listOf())
 
-            val actual : Map<ID, Stack<Crate>> = execute(ship, listOf(Rearrange(1, 1, 2)))
+            val actual : Ship = execute(ship, listOf(Rearrange(1, 1, 2)))
 
             assertThat(actual).isEqualTo(mapOf(1 to listOf(), 2 to listOf("D")))
         }
 
         @Test
-        fun `moving 0 crate to a stack with 1 crate, moves nothing`() {
-            val map : Map<ID, Stack<Crate>> = mapOf(1 to listOf("D"), 2 to listOf())
+        fun `moving 1 crate of an empty stack to a stack with 1 crate, moves nothing`() {
+            val map : Ship = mapOf(1 to listOf("D"), 2 to listOf())
 
-            val actual : Map<ID, Stack<Crate>> = execute(map, listOf(Rearrange(1, 2, 1)))
+            val actual : Ship = execute(map, listOf(Rearrange(1, 2, 1)))
 
             assertThat(actual).isEqualTo(mapOf(1 to listOf("D"), 2 to listOf()))
         }
     }
 }
 
-private fun execute(ship: Map<ID, Stack<Crate>>, procedure: List<Rearrange>): Map<ID, Stack<Crate>> {
+fun Ship.topCrates(): String =
+    map { (_,crates) -> crates.firstOrNull() ?: " " }.joinToString("")
+
+fun execute(ship: Ship, procedure: List<Rearrange>): Ship {
     return procedure.fold(ship) { acc, rearrange ->
-        val originStack = ship.getValue(rearrange.origin)
-        val destinationStack = ship.getValue(rearrange.destination)
+        val originStack = acc.getValue(rearrange.origin)
+        val destinationStack = acc.getValue(rearrange.destination)
         val cratesInTransit = originStack.take(rearrange.amountOfCrates)
         val remainingOrigin = originStack.drop(rearrange.amountOfCrates)
-        ship.mapValues { (k,v) ->
+        acc.mapValues { (k,v) ->
             when (k) {
                 rearrange.origin -> remainingOrigin
-                rearrange.destination -> destinationStack + cratesInTransit.reversed()
+                rearrange.destination -> cratesInTransit.reversed() + destinationStack
                 else -> v
             }
         }
@@ -104,7 +107,7 @@ fun parseToRearrangementProcedure(input: String): List<Rearrange> {
     }
 }
 
-fun parseToStacks(input: String): Map<ID, Stack<Crate>> {
+fun parseToShip(input: String): Ship {
     return input.lines().map { line ->
         line.chunked(4)
             .mapIndexedNotNull { idx, crate ->
@@ -123,6 +126,6 @@ fun parseCrateOrNull(crate: String): String? {
 
 
 typealias ID = Int
-typealias Stack<T> = List<T>
 typealias Crate = String
-
+typealias Stack<T> = List<T>
+typealias Ship = Map<ID, Stack<Crate>>
