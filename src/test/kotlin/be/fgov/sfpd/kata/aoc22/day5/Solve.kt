@@ -31,8 +31,10 @@ class Solve {
         assertThat(solve2(input)).isEqualTo(4)
     }
 
-    private fun solve1(input: String) : String = execute(parseToShip(input),parseToRearrangementProcedure(input)).topCrates()
-    private fun solve2(input: String) : String = TODO()
+    private fun solve1(input: String): String =
+        execute(parseToShip(input), parseToRearrangementProcedure(input).take(3)).topCrates()
+
+    private fun solve2(input: String): String = TODO()
 }
 
 

@@ -56,21 +56,33 @@ class CargoCraneTest {
     }
 
     @Nested
+    inner class VisualizationTests {
+        @Test
+        fun `can visualize a ship`() {
+            val shipInput = """
+    [D]    
+[N] [C]    
+[Z] [M] [P]"""
+            assertThat(parseToShip(shipInput).visualize()).isEqualToIgnoringWhitespace(shipInput)
+        }
+    }
+
+    @Nested
     inner class RearrangementTests {
         @Test
         fun `moving 1 crate to an empty stack`() {
-            val ship : Ship = mapOf(1 to listOf("D"), 2 to listOf())
+            val ship: Ship = mapOf(1 to listOf("D"), 2 to listOf())
 
-            val actual : Ship = execute(ship, listOf(Rearrange(1, 1, 2)))
+            val actual: Ship = execute(ship, listOf(Rearrange(1, 1, 2)))
 
             assertThat(actual).isEqualTo(mapOf(1 to listOf(), 2 to listOf("D")))
         }
 
         @Test
         fun `moving 1 crate of an empty stack to a stack with 1 crate, moves nothing`() {
-            val map : Ship = mapOf(1 to listOf("D"), 2 to listOf())
+            val map: Ship = mapOf(1 to listOf("D"), 2 to listOf())
 
-            val actual : Ship = execute(map, listOf(Rearrange(1, 2, 1)))
+            val actual: Ship = execute(map, listOf(Rearrange(1, 2, 1)))
 
             assertThat(actual).isEqualTo(mapOf(1 to listOf("D"), 2 to listOf()))
         }
@@ -78,23 +90,23 @@ class CargoCraneTest {
 }
 
 fun Ship.topCrates(): String =
-    map { (_,crates) -> crates.firstOrNull() ?: " " }.joinToString("")
+    map { (_, crates) -> crates.firstOrNull() ?: " " }.joinToString("")
 
-fun execute(ship: Ship, procedure: List<Rearrange>): Ship {
-    return procedure.fold(ship) { acc, rearrange ->
+fun execute(ship: Ship, procedure: List<Rearrange>): Ship =
+    procedure.fold(ship.also { println(it.visualize()) }) { acc, rearrange ->
+        println("####### Moving ${rearrange.amountOfCrates} from ${rearrange.origin} to ${rearrange.destination} #######")
         val originStack = acc.getValue(rearrange.origin)
         val destinationStack = acc.getValue(rearrange.destination)
         val cratesInTransit = originStack.take(rearrange.amountOfCrates)
         val remainingOrigin = originStack.drop(rearrange.amountOfCrates)
-        acc.mapValues { (k,v) ->
+        acc.mapValues { (k, v) ->
             when (k) {
                 rearrange.origin -> remainingOrigin
                 rearrange.destination -> cratesInTransit.reversed() + destinationStack
                 else -> v
             }
-        }
+        }.also { println("\n"+it.visualize()) }
     }
-}
 
 data class Rearrange(val amountOfCrates: Int, val origin: ID, val destination: ID)
 
@@ -115,7 +127,7 @@ fun parseToShip(input: String): Ship {
             }
     }.flatten()
         .groupBy(Pair<Int, String>::first) { it.second }
-        .mapValues { (_,v) -> v.toMutableList() }
+        .mapValues { (_, v) -> v.toMutableList() }
         .toSortedMap()
 }
 
@@ -124,6 +136,14 @@ fun parseCrateOrNull(crate: String): String? {
     else null
 }
 
+fun Ship.visualize(): String {
+    val biggestStackSize = values.maxOf { it.size }
+    return (0..biggestStackSize).reversed().map { level ->
+                map { (_, stack) ->
+                    stack.reversed().getOrNull(level)?.let { "[$it]" } ?: "   "
+                }.joinToString(" ")
+            }.joinToString("\n") + "\n"+keys.joinToString(" "){ " $it "}
+}
 
 typealias ID = Int
 typealias Crate = String
