@@ -24,19 +24,26 @@ class Solve {
     @Test
     fun `example input part 2`() {
         val input = readFile("day5/exampleInput.txt")
-        assertThat(solve2(input)).isEqualTo(4)
+        assertThat(solve2(input)).isEqualTo("MCD")
     }
 
     @Test
     fun `actual input part 2`() {
         val input = readFile("day5/input.txt")
-        assertThat(solve2(input)).isEqualTo(4)
+        assertThat(solve2(input)).isEqualTo("QLFQDBBHM")
     }
 
-    private fun solve1(input: String): String =
-        execute(parseToShip(input), parseToRearrangementProcedure(input)).topCrates()
+    private fun solve1(input: String): String {
+        val ship = parseToShip(input)
+        val procedure = parseToRearrangementProcedure(input)
+        return execute(ship, procedure, CrateMover9000).topCrates()
+    }
 
-    private fun solve2(input: String): String = TODO()
+    private fun solve2(input: String): String {
+        val ship = parseToShip(input)
+        val procedure = parseToRearrangementProcedure(input)
+        return execute(ship, procedure, CrateMover9001).topCrates()
+    }
 }
 
 
