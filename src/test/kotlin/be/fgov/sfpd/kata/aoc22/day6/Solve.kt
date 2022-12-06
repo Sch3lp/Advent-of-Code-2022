@@ -30,7 +30,6 @@ class Solve {
         assertThat(solve2(input)).isEqualTo(42)
     }
 
-    private fun solve1(input: String): Int = Handheld(CommSystem()).startingMarkerPosition(input.asSequence())
-
-    private fun solve2(input: String): Int = TODO()
+    private fun solve1(input: String): Int = Handheld(CommSystem()).startOfPacketMarkerPosition(input.asSequence())
+    private fun solve2(input: String): Int = Handheld(CommSystem()).startOfMessageMarkerPosition(input.asSequence())
 }
