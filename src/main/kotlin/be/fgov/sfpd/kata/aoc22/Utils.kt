@@ -24,4 +24,11 @@ data class Point(val x: Int, val y: Int) {
     //@formatter:on
 
     operator fun plus(vector: Point) = Point(this.x + vector.x, this.y + vector.y)
+    operator fun rangeTo(point: Point): Set<Point> = when {
+        this.x < point.x && this.y == point.y -> (this.x..point.x).map { Point(it, this.y) }
+        this.x > point.x && this.y == point.y -> (this.x.until(point.x)).map { Point(it, this.y) }
+        this.x == point.x && this.y < point.y -> (this.y..point.y).map { Point(this.x, it) }
+        this.x == point.x && this.y > point.y -> (this.y.until(point.y)).map { Point(this.x, it) }
+        else -> error("")
+    }.toSet()
 } 
