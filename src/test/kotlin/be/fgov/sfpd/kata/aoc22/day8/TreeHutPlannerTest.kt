@@ -32,7 +32,13 @@ class TreeHutPlannerTest {
 
     @Test
     fun `forest can count amount of visible trees`() {
-        assertThat(Forest(parse(input)).visibleTrees).isEqualTo(21)
+        assertThat(Forest(parse(input)).visibleTrees)
+            .doesNotContainKeys(
+                Point(3,1),
+                Point(2,2),
+                Point(1,3),Point(3,3),
+            )
+            .hasSize(21)
     }
 
     @Test
@@ -44,7 +50,7 @@ class TreeHutPlannerTest {
 
     @Test
     fun `forest can retrieve the tree with the highest scenic score`() {
-        TODO("Not yet implemented")
+        assertThat(Forest(parse(input)).highestScenicScore).isEqualTo(8)
     }
 }
 
@@ -55,27 +61,25 @@ class Forest(trees: Set<Tree>) {
     private val eastEdge = trees.maxOf { it.at.x }
     private val southEdge = trees.maxOf { it.at.y }
 
-    val visibleTrees: Int get() = treeGrid.count { (at,_) -> isVisible(at) }
+    val highestScenicScore: Int get() =
+        treeGrid.maxOf { (at,_) -> scenicScoreFor(at) }
 
     fun scenicScoreFor(at: Point): Int {
-        val tree = treeGrid.at(at).also { println("checking scenic score for $it") }
+        val tree = treeGrid.at(at)
         val treeHeight = tree.height
         val treesNorthWithinView = at.treesNorthOf().takeWhile { it.isLowerThan(treeHeight) }.count() + countNorthernSameOrTallerHeightOnce(tree)
         val treesSouthWithinView = at.treesSouthOf().takeWhile { it.isLowerThan(treeHeight) }.count() + countSouthernSameOrTallerHeightOnce(tree)
         val treesEastWithinView = at.treesEastOf().takeWhile { it.isLowerThan(treeHeight) }.count() + countEasternSameOrTallerHeightOnce(tree)
         val treesWestWithinView = at.treesWestOf().takeWhile { it.isLowerThan(treeHeight) }.count() + countWesternSameOrTallerHeightOnce(tree)
 
-        return treesNorthWithinView.also { println("treesNorth: $it") } *
-                treesSouthWithinView.also { println("treesSouth: $it") } *
-                treesEastWithinView.also { println("treesEast: $it") } *
-                treesWestWithinView.also { println("treesWest: $it") }
+        return treesNorthWithinView *
+                treesSouthWithinView *
+                treesEastWithinView *
+                treesWestWithinView
     }
 
-    private fun countNorthernSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesNorthOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
-    private fun countSouthernSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesSouthOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
-    private fun countEasternSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesEastOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
-    private fun countWesternSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesWestOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
-
+    val visibleTrees get() = treeGrid.filter { (at, _) -> isVisible(at) }
+    val visibleTreesTotal: Int get() = visibleTrees.count()
     fun isVisible(at: Point): Boolean {
         val treeHeight = treeGrid.at(at).height
         return at.isAtEdge()
@@ -85,19 +89,27 @@ class Forest(trees: Set<Tree>) {
                 || at.treesWestOf().areLowerThan(treeHeight)
     }
 
+    private fun countNorthernSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesNorthOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
+    private fun countSouthernSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesSouthOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
+    private fun countEasternSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesEastOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
+    private fun countWesternSameOrTallerHeightOnce(tree: Tree): Int = tree.at.treesWestOf().firstOrNull { it.isTallerThanOrEqualTo(tree.height) }?.let { 1 } ?: 0
+
     private fun Sequence<Tree>.areLowerThan(height: Height): Boolean = all { it.isLowerThan(height) } //TODO: use any{} so we don't consume the full sequence 
     private fun Tree.isLowerThan(height: Height) = this.height < height
     private fun Tree.isTallerThanOrEqualTo(height: Height) = this.height >= height
 
     private fun Point.treesNorthOf() = ((this..Point(this.x, northEdge)) - this).mapNotNull { treeGrid[it] }.asSequence()
     private fun Point.treesSouthOf() = ((this..Point(this.x, southEdge)) - this).mapNotNull { treeGrid[it] }.asSequence()
-    private fun Point.treesEastOf() = ((this..Point(this.x, eastEdge)) - this).mapNotNull { treeGrid[it] }.asSequence()
-    private fun Point.treesWestOf() = ((this..Point(this.x, westEdge)) - this).mapNotNull { treeGrid[it] }.asSequence()
+    private fun Point.treesEastOf() = ((this..Point(eastEdge, this.y)) - this).mapNotNull { treeGrid[it] }.asSequence()
+    private fun Point.treesWestOf() = ((this..Point(westEdge, this.y)) - this).mapNotNull { treeGrid[it] }.asSequence()
 
     private fun Map<Point,Tree>.at(point: Point) = getValue(point)
 
     private fun Point.isAtEdge() = this.x == westEdge || this.x == eastEdge || this.y == northEdge || this.y == southEdge
 }
+
+private fun Map<Point, Tree>.visualize(): String =
+    toList().joinToString("\n") { (k, v) -> "${k.x},${k.y}=${v.height}" }
 
 fun parse(input: String): Set<Tree> =
     input.lines().flatMapIndexed { y, line ->

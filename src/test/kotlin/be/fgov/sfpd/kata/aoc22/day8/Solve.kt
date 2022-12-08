@@ -21,15 +21,15 @@ class Solve {
     @Test
     fun `example input part 2`() {
         val input = readFile("day8/exampleInput.txt")
-        assertThat(solve2(input)).isEqualTo(19)
+        assertThat(solve2(input)).isEqualTo(8)
     }
 
     @Test
     fun `actual input part 2`() {
         val input = readFile("day8/input.txt")
-        assertThat(solve2(input)).isEqualTo(42)
+        assertThat(solve2(input)).isEqualTo(157320)
     }
 
-    private fun solve1(input: String): Int = Forest(parse(input)).visibleTrees
-    private fun solve2(input: String): Int = TODO()
+    private fun solve1(input: String): Int = Forest(parse(input)).visibleTreesTotal
+    private fun solve2(input: String): Int = Forest(parse(input)).highestScenicScore
 }

@@ -34,6 +34,7 @@ data class Point(val x: Int, val y: Int) {
         this.x > point.x && this.y == point.y -> (this.x.downTo(point.x)).map { copy(x = it) }
         this.x == point.x && this.y < point.y -> (this.y..point.y).map { copy(y = it) }
         this.x == point.x && this.y > point.y -> (this.y.downTo(point.y)).map { copy(y = it) }
-        else -> error("No diagonal/manhattan ranges supported yet")
+        this == point -> emptySet()
+        else -> error("No diagonal/manhattan ranges supported yet. Given: $this..$point")
     }.toSet()
 } 
