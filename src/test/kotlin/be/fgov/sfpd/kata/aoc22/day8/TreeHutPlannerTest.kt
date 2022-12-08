@@ -45,16 +45,17 @@ class Forest(private val trees: Set<Tree>) {
     val visibleTrees: Int get() = trees.count { isVisible(it.at) }
     
     fun isVisible(at: Point): Boolean {
+        val treeHeight = trees.at(at).height
         return at.isAtEdge()
-                || at.treesNorthOf().also { println("trees north of $at: $it") }.areLowerThan(trees.at(at).height)
-                || at.treesSouthOf().areLowerThan(trees.at(at).height)
-                || at.treesEastOf().areLowerThan(trees.at(at).height)
-                || at.treesWestOf().areLowerThan(trees.at(at).height)
+                || at.treesNorthOf().areLowerThan(treeHeight)
+                || at.treesSouthOf().areLowerThan(treeHeight)
+                || at.treesEastOf().areLowerThan(treeHeight)
+                || at.treesWestOf().areLowerThan(treeHeight)
     }
 
     private fun List<Tree>.areLowerThan(height: Height) : Boolean = all { it.height < height }
 
-    private fun Point.treesNorthOf() = trees.filter { it.at in (this..Point(this.x, northEdge)).also { println("points north of: $it") } - this }
+    private fun Point.treesNorthOf() = trees.filter { it.at in (this..Point(this.x, northEdge)) - this }
     private fun Point.treesSouthOf() = trees.filter { it.at in (this..Point(this.x, southEdge)) - this }
     private fun Point.treesEastOf() = trees.filter { it.at in (this..Point(eastEdge, this.y)) - this }
     private fun Point.treesWestOf() = trees.filter { it.at in (this..Point(westEdge, this.y)) - this }
