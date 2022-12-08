@@ -27,7 +27,7 @@ class Solve {
     @Test
     fun `actual input part 2`() {
         val input = readFile("day4/input.txt")
-        assertThat(solve2(input)).isEqualTo(4)
+        assertThat(solve2(input)).isEqualTo(847)
     }
 
     private fun solve1(input: String) : Int = CampCleaning.fullyContainedPairs(input)

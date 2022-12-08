@@ -27,7 +27,7 @@ class Solve {
     @Test
     fun `actual input part 2`() {
         val input = readFile("day6/input.txt")
-        assertThat(solve2(input)).isEqualTo(42)
+        assertThat(solve2(input)).isEqualTo(2773)
     }
 
     private fun solve1(input: String): Int = Handheld(CommSystem()).startOfPacketMarkerPosition(input.asSequence())

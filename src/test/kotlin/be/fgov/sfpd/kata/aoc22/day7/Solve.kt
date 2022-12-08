@@ -2,8 +2,10 @@ package be.fgov.sfpd.kata.aoc22.day7
 
 import be.fgov.sfpd.kata.aoc22.readFile
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
+@Disabled
 class Solve {
 
     @Test
