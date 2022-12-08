@@ -29,6 +29,11 @@ class TreeHutPlannerTest {
         assertThat(Forest(parse(input)).isVisible(Point(0,0))).isTrue()
         assertThat(Forest(parse(input)).isVisible(Point(3,1))).isFalse()
     }
+
+    @Test
+    fun `forest can count amount of visible trees`() {
+        assertThat(Forest(parse(input)).visibleTrees).isEqualTo(21)
+    }
 }
 
 class Forest(private val trees: Set<Tree>) {
@@ -37,21 +42,22 @@ class Forest(private val trees: Set<Tree>) {
     private val eastEdge = trees.maxOf { it.at.x }
     private val southEdge = trees.maxOf { it.at.y }
 
+    val visibleTrees: Int get() = trees.count { isVisible(it.at) }
+    
     fun isVisible(at: Point): Boolean {
         return at.isAtEdge()
-                || at.treesNorthOf().areLowerThan(trees.at(at).height)
+                || at.treesNorthOf().also { println("trees north of $at: $it") }.areLowerThan(trees.at(at).height)
                 || at.treesSouthOf().areLowerThan(trees.at(at).height)
                 || at.treesEastOf().areLowerThan(trees.at(at).height)
                 || at.treesWestOf().areLowerThan(trees.at(at).height)
     }
 
-    private fun List<Tree>.areLowerThan(height: Height) : Boolean
-        = all { it.height < height }
+    private fun List<Tree>.areLowerThan(height: Height) : Boolean = all { it.height < height }
 
-    private fun Point.treesNorthOf() = trees.filter { it.at in this..Point(this.x, northEdge) }
-    private fun Point.treesSouthOf() = trees.filter { it.at in this..Point(this.x, southEdge) }
-    private fun Point.treesEastOf() = trees.filter { it.at in this..Point(eastEdge, this.y) }
-    private fun Point.treesWestOf() = trees.filter { it.at in this..Point(westEdge, this.y) }
+    private fun Point.treesNorthOf() = trees.filter { it.at in (this..Point(this.x, northEdge)).also { println("points north of: $it") } - this }
+    private fun Point.treesSouthOf() = trees.filter { it.at in (this..Point(this.x, southEdge)) - this }
+    private fun Point.treesEastOf() = trees.filter { it.at in (this..Point(eastEdge, this.y)) - this }
+    private fun Point.treesWestOf() = trees.filter { it.at in (this..Point(westEdge, this.y)) - this }
 
     private fun Set<Tree>.at(point: Point) = this.first { it.at == point }
 
