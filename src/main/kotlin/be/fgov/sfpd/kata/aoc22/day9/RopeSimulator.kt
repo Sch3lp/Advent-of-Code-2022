@@ -4,29 +4,22 @@ import be.fgov.sfpd.kata.aoc22.Point
 
 
 data class Rope(
-    private val knots: List<Point>,
-    private val broadcast: (Point) -> Unit = {},
+    val head: Point = Point(0,0),
+    private val tail: Point = Point(0,0),
+    private val broadcast: (Point) -> Unit = {}
 ) {
-    constructor(head: Point = Point(0,0),
-                tail: Point = Point(0,0),
-                broadcast: (Point) -> Unit = {},
-        ) : this(listOf(head,tail), broadcast)
-
-    val head get() = knots.first()
-    private val tail get() = knots.last()
-
     fun pull(commands: List<PullCommand>): Rope =
         commands.fold(this) { acc, cmd -> acc.pull(cmd) }
 
     fun pull(pullCommand: PullCommand): Rope {
         val newHead = head + pullCommand.toVector()
         return if (newHead == tail || tail in newHead.neighbours) {
-            Rope(listOf(newHead) + knots.drop(1), broadcast)
+            copy(head = newHead)
         } else {
             val headMovements = (head until newHead)
             broadcastTail(headMovements)
             val newTail = headMovements.last()
-            Rope(listOf(newHead, newTail), broadcast)
+            copy(head = newHead, tail = newTail)
         }
     }
 
