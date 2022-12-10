@@ -22,7 +22,7 @@ class Solve {
     @Test
     fun `example input part 2`() {
         val input = readFile("day9/exampleInput.txt")
-        assertThat(solve2(input)).isEqualTo(8)
+        assertThat(solve2(input)).isEqualTo(1)
     }
 
     @Test
@@ -37,5 +37,10 @@ class Solve {
             .pull(PullCommand.fromLines(input))
         return tailMovements.size
     }
-    private fun solve2(input: String): Int = TODO()
+    private fun solve2(input: String): Int {
+        val tailMovements = mutableSetOf(Point(0,0))
+        Rope(broadcast = tailMovements::add)
+            .pull(PullCommand.fromLines(input))
+        TODO()
+    }
 }
