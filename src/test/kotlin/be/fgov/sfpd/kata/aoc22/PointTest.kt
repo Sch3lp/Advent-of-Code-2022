@@ -1,10 +1,8 @@
 package be.fgov.sfpd.kata.aoc22
 
+import be.fgov.sfpd.kata.aoc22.Point.RangeToPreference.VectorFirst
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.SoftAssertions
-import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
 class PointTest {
 
@@ -53,23 +51,23 @@ class PointTest {
     }
 
     @Test
-    fun `rangeTo diagonally prefers vector direction over axis alignment`() {
-        assertThat(Point(0, 0)..Point(1, 2)).containsExactly(Point(0, 0), Point(0, 1), Point(0, 2), Point(1, 2))
-        assertThat(Point(0, 0)..Point(2, 1)).containsExactly(Point(0, 0), Point(1, 0), Point(2, 0), Point(2, 1))
+    fun `rangeTo diagonally just goes diagonally (no manhattan)`() {
+        assertThat(Point(0, 0)..Point(1, 2)).containsExactly(Point(0, 0), Point(1, 1), Point(1, 2))
+        assertThat(Point(0, 0)..Point(2, 1)).containsExactly(Point(0, 0), Point(1, 1), Point(2, 1))
 
-        assertThat(Point(2, 1)..Point(0, 0)).containsExactly(Point(2, 1), Point(1, 1), Point(0, 1), Point(0, 0))
-        assertThat(Point(1, 2)..Point(0, 0)).containsExactly(Point(1, 2), Point(1, 1), Point(1, 0), Point(0, 0))
+        assertThat(Point(2, 1)..Point(0, 0)).containsExactly(Point(2, 1), Point(1, 0), Point(0, 0))
+        assertThat(Point(1, 2)..Point(0, 0)).containsExactly(Point(1, 2), Point(0, 1), Point(0, 0))
 
-        assertThat(Point(0, 0)..Point(-1, -2)).containsExactly(Point(0, 0), Point(0, -1), Point(0, -2), Point(-1, -2))
-        assertThat(Point(0, 0)..Point(-2, -1)).containsExactly(Point(0, 0), Point(-1, 0), Point(-2, 0), Point(-2, -1))
+        assertThat(Point(0, 0)..Point(-1, -2)).containsExactly(Point(0, 0), Point(-1, -1), Point(-1, -2))
+        assertThat(Point(0, 0)..Point(-2, -1)).containsExactly(Point(0, 0), Point(-1, -1), Point(-2, -1))
 
-        assertThat(Point(-1, -2)..Point(0, 0)).containsExactly(Point(-1, -2), Point(-1, -1), Point(-1, 0), Point(0, 0))
-        assertThat(Point(-2, -1)..Point(0, 0)).containsExactly(Point(-2, -1), Point(-1, -1), Point(0, -1), Point(0, 0))
+        assertThat(Point(-1, -2)..Point(0, 0)).containsExactly(Point(-1, -2), Point(0, -1), Point(0, 0))
+        assertThat(Point(-2, -1)..Point(0, 0)).containsExactly(Point(-2, -1), Point(-1, 0), Point(0, 0))
 
-        assertThat(Point(0, 0)..Point(1, -2)).containsExactly(Point(0, 0), Point(0, -1), Point(0, -2), Point(1, -2))
-        assertThat(Point(0, 0)..Point(-2, 1)).containsExactly(Point(0, 0), Point(-1, 0), Point(-2, 0), Point(-2, 1))
+        assertThat(Point(0, 0)..Point(1, -2)).containsExactly(Point(0, 0), Point(1, -1), Point(1, -2))
+        assertThat(Point(0, 0)..Point(-2, 1)).containsExactly(Point(0, 0), Point(-1, 1), Point(-2, 1))
 
-        assertThat(Point(1, -2)..Point(0, 0)).containsExactly(Point(1, -2), Point(1, -1), Point(1, 0), Point(0, 0))
-        assertThat(Point(-2, 1)..Point(0, 0)).containsExactly(Point(-2, 1), Point(-1, 1), Point(0,  1), Point(0, 0))
+        assertThat(Point(1, -2)..Point(0, 0)).containsExactly(Point(1, -2), Point(0, -1), Point(0, 0))
+        assertThat(Point(-2, 1)..Point(0, 0)).containsExactly(Point(-2, 1), Point(-1,  0), Point(0, 0))
     }
 }

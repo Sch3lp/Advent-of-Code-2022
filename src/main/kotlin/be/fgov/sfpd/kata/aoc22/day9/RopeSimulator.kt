@@ -1,31 +1,36 @@
 package be.fgov.sfpd.kata.aoc22.day9
 
 import be.fgov.sfpd.kata.aoc22.Point
-
+import kotlin.math.sign
 
 data class Rope(
-    val head: Point = Point(0,0),
-    private val tail: Point = Point(0,0),
-    private val broadcast: (Point) -> Unit = {}
+    private var head: Point = Point(0, 0),
+    private var tail: Point = Point(0, 0),
+    private val broadcast: (Point) -> Unit = {},
+    val id: String = "H",
 ) {
-    fun pull(commands: List<PullCommand>): Rope =
-        commands.fold(this) { acc, cmd -> acc.pull(cmd) }
+    val start get() = head
+    val end get() = tail
 
-    fun pull(pullCommand: PullCommand): Rope {
-        val newHead = head + pullCommand.toVector()
-        return if (newHead == tail || tail in newHead.neighbours) {
-            copy(head = newHead)
-        } else {
-            val headMovements = (head until newHead)
-            broadcastTail(headMovements)
-            val newTail = headMovements.last()
-            copy(head = newHead, tail = newTail)
+    fun pull(commands: List<PullCommand>): Unit =
+        commands.forEach { cmd -> pull(cmd) }
+
+    fun pull(pullCommand: PullCommand) {
+        pullCommand.normalized().forEach { command ->
+            val newHead = head + command.toVector()
+            follow(newHead)
         }
     }
 
-    private fun broadcastTail(headMovements: Set<Point>) {
-        val movementsToNotBroadcast = tail.neighbours.intersect(headMovements).size - 1
-        headMovements.drop(movementsToNotBroadcast).onEach(broadcast)
+    fun follow(pointToFollow: Point) {
+        head = pointToFollow
+        if (tail != head && tail !in pointToFollow.neighbours) {
+            val vectorToPoint = if (tail.x == pointToFollow.x) Point(0, (pointToFollow.y - tail.y).sign)
+            else if (tail.y == pointToFollow.y) Point((pointToFollow.x - tail.x).sign, 0)
+            else Point((pointToFollow.x - tail.x).sign, (pointToFollow.y - tail.y).sign)
+            tail += vectorToPoint
+            broadcast(tail)
+        }
     }
 }
 
@@ -37,6 +42,15 @@ sealed interface PullCommand {
         is Right -> Point(1, 0)
         is Left -> Point(-1, 0)
     } * steps
+
+    fun normalized(): List<PullCommand> = (1..steps).map {
+        when (this) {
+            is Up -> Up(1)
+            is Down -> Down(1)
+            is Left -> Left(1)
+            is Right -> Right(1)
+        }
+    }
 
     companion object {
         fun fromLines(input: String) = input.lines().map { line -> fromLine(line) }
