@@ -172,8 +172,8 @@ class RopeSimulatorTest {
 
     @Test
     fun `end position part 1 with example input`() {
-        val tailMovements = mutableListOf<Point>(Point(0, 0))
-        val partialTailMovements = mutableListOf<Point>(Point(0, 0))
+        val tailMovements = mutableListOf(Point(0, 0))
+        val partialTailMovements = mutableListOf(Point(0, 0))
         val broadcaster: (Point) -> Unit = {
             partialTailMovements.add(it)
             tailMovements.add(it)
@@ -258,8 +258,8 @@ class RopeSimulatorTest {
     @Test
     fun `part 2 visualized`() {
         val tailMovements = mutableSetOf<Point>()
-        val tail = Rope(Point(0, 0), Point(0, 0), tailMovements::add, "9")
-        val knot8 = Rope(Point(0, 0), Point(0, 0), tail::follow, "8")
+        val tail = Rope(Point(0, 0), Point(0, 0), id = "9")
+        val knot8 = Rope(Point(0, 0), Point(0, 0), { tailPoint -> tail.follow(tailPoint); tailMovements.add(tailPoint)}, "8")
         val knot7 = Rope(Point(0, 0), Point(0, 0), knot8::follow, "7")
         val knot6 = Rope(Point(0, 0), Point(0, 0), knot7::follow, "6")
         val knot5 = Rope(Point(0, 0), Point(0, 0), knot6::follow, "5")
@@ -537,7 +537,7 @@ H.........................
             .#..........#.....#.......
             ..#..........#.....#......
             ...#........#.......#.....
-            ....#......s.........#....
+            ....#................#....
             .....#..............#.....
             ......#............#......
             .......#..........#.......
