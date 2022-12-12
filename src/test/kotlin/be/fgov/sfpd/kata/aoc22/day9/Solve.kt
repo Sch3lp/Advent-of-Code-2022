@@ -30,6 +30,7 @@ class Solve {
         val input = readFile("day9/input.txt")
         assertThat(solve2(input))
             .isGreaterThan(2333)
+            .isEqualTo(2533)
     }
 
     private fun solve1(input: String): Int {
@@ -41,8 +42,7 @@ class Solve {
 
     private fun solve2(input: String): Int {
         val tailMovements = mutableSetOf(Point(0,0))
-        val tail = Rope(Point(0, 0), Point(0, 0), tailMovements::add, "T")
-        val knot8 = Rope(Point(0, 0), Point(0, 0), tail::follow, "8")
+        val knot8 = Rope(Point(0, 0), Point(0, 0), tailMovements::add, "8")
         val knot7 = Rope(Point(0, 0), Point(0, 0), knot8::follow, "7")
         val knot6 = Rope(Point(0, 0), Point(0, 0), knot7::follow, "6")
         val knot5 = Rope(Point(0, 0), Point(0, 0), knot6::follow, "5")
