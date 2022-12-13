@@ -9,28 +9,46 @@ class Solve {
     @Test
     fun `example input part 1`() {
         val input = readFile("day10/exampleInput.txt")
-        assertThat(solve1(input)).isEqualTo(13140L)
+        assertThat(solve1(input)).isEqualTo(13140)
     }
 
     @Test
     fun `actual input part 1`() {
         val input = readFile("day10/input.txt")
-        assertThat(solve1(input)).isEqualTo(11820L)
+        assertThat(solve1(input)).isEqualTo(11820)
     }
 
     @Test
     fun `example input part 2`() {
         val input = readFile("day10/exampleInput.txt")
-        assertThat(solve2(input)).isEqualTo(1)
+        val expected = """
+        ⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚫️⚫️
+        ⚪️⚪️⚪️⚫️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚫️⚪️⚪️⚪️⚫️
+        ⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️
+        ⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️
+        ⚪️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️
+        ⚪️⚪️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚪️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️
+        """.trimIndent()
+
+        assertThat(solve2(input)).isEqualTo(expected)
     }
 
     @Test
     fun `actual input part 2`() {
         val input = readFile("day10/input.txt")
-        assertThat(solve2(input)).isEqualTo(2533)
+        val expected = """
+          ⚪️⚪️⚪️⚪️⚫️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚪️⚪️⚫️⚪️⚪️⚪️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚫️
+          ⚪️⚫️⚫️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚫️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️
+          ⚪️⚪️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚫️⚫️⚫️⚪️⚫️⚪️⚪️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚪️⚫️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚪️⚪️⚪️⚫️
+          ⚪️⚫️⚫️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚫️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚪️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚪️⚪️⚪️⚫️⚪️⚫️⚫️⚪️⚫️
+          ⚪️⚫️⚫️⚫️⚫️⚪️⚫️⚫️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️
+          ⚪️⚪️⚪️⚪️⚫️⚪️⚫️⚫️⚫️⚫️⚫️⚪️⚪️⚫️⚫️⚪️⚪️⚪️⚫️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️⚪️⚫️⚫️⚪️⚫️
+        """.trimIndent()
+        //EPJBRKAH
+        assertThat(solve2(input)).isEqualTo(expected)
     }
 
-    private fun solve1(input: String): Long = signalStrength(cycles(input))
+    private fun solve1(input: String): Int = CRT.signalStrength(input)
 
-    private fun solve2(input: String): Int = TODO()
+    private fun solve2(input: String): String = CRT.drawImage(input)
 }
