@@ -66,7 +66,7 @@ data class Point(val x: Int, val y: Int) {
 
 object Debugging {
     private var debugEnabled = false
-    fun <T> T.debug(block: (it: T) -> String) = if (debugEnabled) this.also { println(block(this)) } else this
+    fun <T> T.debug(block: (it: T) -> String?) = if (debugEnabled) this.also { block(this)?.let { println("$it") } } else this
     fun enable() {
         debugEnabled = true
     }
