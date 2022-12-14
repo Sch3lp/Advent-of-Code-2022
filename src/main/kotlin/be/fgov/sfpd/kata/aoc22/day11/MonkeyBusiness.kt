@@ -59,8 +59,8 @@ data class Monkey(
         items.map { item ->
             monkeyInspector.inspect(id, 1)
             val newWorryLevel = worryLevelOperation(item) / 3
-            if (test(newWorryLevel)) item throwTo trueMonkey
-            else item throwTo falseMonkey
+            if (test(newWorryLevel)) newWorryLevel throwTo trueMonkey
+            else newWorryLevel throwTo falseMonkey
         }.also { items.clear() }
 
     fun catch(item: Int) = items.add(item)
