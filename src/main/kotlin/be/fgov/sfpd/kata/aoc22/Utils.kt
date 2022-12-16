@@ -56,12 +56,15 @@ data class Point(val x: Int, val y: Int) {
     }
 }
 
+/** Least common multiple **/
 fun List<Int>.lcm(): Int =
     map { it.toLong() }.reduce(::lcm).toInt()
 
+/** Least common multiple **/
 fun lcm(a: Long, b: Long) : Long
         = (a safeTimes b) / gcd(a,b)
 
+/** Greatest Common Denominator **/
 fun gcd(a: Long, b: Long) : Long =
     if (b == 0L) a.absoluteValue else gcd(b, a % b)
 

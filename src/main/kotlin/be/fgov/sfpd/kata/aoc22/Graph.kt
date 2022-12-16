@@ -8,19 +8,18 @@ interface Node {
 typealias Path = List<Node>
 typealias PathBuilder = MutableList<Node>
 
-class Edge(private val pair: Pair<Node, Node>) {
-    val first = pair.first
-    val second = pair.second
-    fun toList() = pair.toList()
-    fun flipped() = Edge(second to first)
+class Edge(val first: Node, val second: Node) {
+    fun toList() = Pair(first, second).toList()
+    fun flipped() = Edge(second, first)
     operator fun component1() = first
     operator fun component2() = second
 }
+fun Pair<Node, Node>.asEdge() = Edge(first,second)
 
 class Graph(private val edgeList: List<Edge>) {
 
     private val uniqueNodes = edgeList.flatMap { edge -> edge.toList() }.toSet()
-    private val adjacencyList: Map<Node, List<Edge>> get() {
+    private val adjacencyList: Map<Node, List<Edge>> by lazy {
         val directedEdges = edgeList.groupBy { edge -> edge.first }
         val reversedEdges = edgeList.groupBy({ edge -> edge.second }) { it.flipped() }
         val nodes: Set<Node> = directedEdges.keys + reversedEdges.keys
@@ -28,7 +27,7 @@ class Graph(private val edgeList: List<Edge>) {
             .associateWith { node ->
                 directedEdges.getOrDefault(node, emptyList()) + reversedEdges.getOrDefault(node, emptyList())
             }
-        return mergedEdges
+        mergedEdges
     }
 
     private val visited: MutableMap<Node, Boolean>
@@ -40,14 +39,15 @@ class Graph(private val edgeList: List<Edge>) {
     private fun neighboursOf(node: Node) = adjacencyList[node]?.map { it.second } ?: emptyList()
 
     fun findAllPaths(from: Node, to: Node): List<Path> {
-        return depthFirstSearch(from, to, visited, path = mutableListOf(from), paths = mutableListOf())
+        return dfs(from, to, visited, path = mutableListOf(from), paths = mutableListOf())
     }
 
     fun findAllPaths2(from: Node, to: Node): List<Path> {
-        return depthFirstSearch2(from, to, visitedAmounts, path = mutableListOf(from), paths = mutableListOf())
+        return dfs2(from, to, visitedAmounts, path = mutableListOf(from), paths = mutableListOf())
     }
 
-    private fun depthFirstSearch(
+    /** Depth First Search **/
+    private fun dfs(
         from: Node,
         to: Node,
         visited: MutableMap<Node, Boolean>,
@@ -62,7 +62,7 @@ class Graph(private val edgeList: List<Edge>) {
         neighboursOf(from).forEach { node ->
             if (!visited.getValue(node)) {
                 path += node
-                depthFirstSearch(node, to, visited, path, paths)
+                dfs(node, to, visited, path, paths)
                 path.removeLast()
             }
         }
@@ -71,7 +71,9 @@ class Graph(private val edgeList: List<Edge>) {
     }
 
     var specialNode: Node? = null
-    private fun depthFirstSearch2(
+
+    /** Depth First Search **/
+    private fun dfs2(
         from: Node,
         to: Node,
         visits: MutableMap<Node, Int>,
@@ -89,7 +91,7 @@ class Graph(private val edgeList: List<Edge>) {
             if (node.isSmall() && !node.isEnd() && !node.isStart()) node.markSpecial()
             if (visits.canBeRevisited(node)) {
                 path += node
-                depthFirstSearch2(node, to, visits, path, paths)
+                dfs2(node, to, visits, path, paths)
                 path.removeLast()
             }
         }
@@ -121,5 +123,8 @@ class Graph(private val edgeList: List<Edge>) {
             specialNode = this.also { println("Marking $it as special") }
         }
     }
-    private fun resetSpecialNode() { specialNode = null }
+
+    private fun resetSpecialNode() {
+        specialNode = null
+    }
 }
