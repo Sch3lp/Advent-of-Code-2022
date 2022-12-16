@@ -1,7 +1,5 @@
 package be.fgov.sfpd.kata.aoc22
 
-import be.fgov.sfpd.kata.aoc22.Point.RangeToPreference
-import be.fgov.sfpd.kata.aoc22.Point.RangeToPreference.*
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
@@ -49,19 +47,27 @@ data class Point(val x: Int, val y: Int) {
         }
         return points
     }
+    infix fun until(other: Point) = (this..other) - other
 
     private fun determineVectorTo(other: Point): Point {
         return if (this.x == other.x) Point(0, (other.y - this.y).sign)
         else if (this.y == other.y) Point((other.x - this.x).sign, 0)
         else Point((other.x - this.x).sign, (other.y - this.y).sign)
     }
+}
 
+fun List<Int>.lcm(): Int =
+    map { it.toLong() }.reduce(::lcm).toInt()
 
-    infix fun until(other: Point) = (this..other) - other
+fun lcm(a: Long, b: Long) : Long
+        = (a safeTimes b) / gcd(a,b)
 
-    enum class RangeToPreference {
-        AlignmentFirst, VectorFirst
-    }
+fun gcd(a: Long, b: Long) : Long =
+    if (b == 0L) a.absoluteValue else gcd(b, a % b)
+
+// Thanks https://github.com/Zordid/adventofcode-kotlin-2022/blob/main/src/main/kotlin/utils
+infix fun Long.safeTimes(other: Long) = (this * other).also {
+    check(other == 0L || it / other == this) { "Long Overflow at $this * $other" }
 }
 
 object Debugging {

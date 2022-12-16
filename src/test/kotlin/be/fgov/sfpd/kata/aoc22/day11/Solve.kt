@@ -1,10 +1,9 @@
 package be.fgov.sfpd.kata.aoc22.day11
 
-import be.fgov.sfpd.kata.aoc22.Debugging
 import be.fgov.sfpd.kata.aoc22.Debugging.withDebugging
 import be.fgov.sfpd.kata.aoc22.day11.MonkeyBusiness.Companion.monkey
 import be.fgov.sfpd.kata.aoc22.day11.MonkeyBusiness.Companion.monkeyBusiness
-import be.fgov.sfpd.kata.aoc22.readFile
+import be.fgov.sfpd.kata.aoc22.lcm
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -25,13 +24,13 @@ class Solve {
     @Test
     fun `example input part 2`() {
         withDebugging {
-            assertThat(solve2(exampleInput)).isEqualTo(2713310158L)
+            assertThat(solve2(exampleInput, listOf(23, 19, 13, 17).lcm())).isEqualTo(2713310158L)
         }
     }
 
     @Test
     fun `actual input part 2`() {
-        assertThat(solve2(actualInput)).isEqualTo(11)
+        assertThat(solve2(actualInput, listOf(3, 17, 2, 19, 11, 5, 13, 7).lcm())).isEqualTo(15117269860L)
     }
 
     private fun solve1(input: MonkeyBusiness.() -> Unit): Long {
@@ -41,9 +40,10 @@ class Solve {
         return mostActiveMonkey * secondMostActiveMonkey
     }
 
-    private fun solve2(input: MonkeyBusiness.() -> Unit): Long {
+    private fun solve2(input: MonkeyBusiness.() -> Unit, commonModulus: Int): Long {
         val monkeyInspector = MonkeyInspector()
-        monkeyBusiness(worryCompensator = false, setup = input).play(10_000, monkeyInspector)
+        val commonModulusCompensator: (Long) -> Long = { it % commonModulus }
+        monkeyBusiness(worryCompensator = commonModulusCompensator, setup = input).play(10_000, monkeyInspector)
         val (mostActiveMonkey, secondMostActiveMonkey) = monkeyInspector.top(2)
         return mostActiveMonkey * secondMostActiveMonkey
     }

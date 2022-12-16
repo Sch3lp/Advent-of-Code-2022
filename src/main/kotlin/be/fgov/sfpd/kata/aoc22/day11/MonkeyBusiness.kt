@@ -21,7 +21,7 @@ class MonkeyInspector(
 }
 
 class MonkeyBusiness private constructor(
-    private val worryCompensator: Boolean
+    private val worryCompensator: (Long) -> Long
 ) {
     private val monkeys: MutableList<Monkey> = mutableListOf()
 
@@ -43,7 +43,7 @@ class MonkeyBusiness private constructor(
     }
 
     companion object {
-        fun monkeyBusiness(worryCompensator: Boolean = true, setup: MonkeyBusiness.() -> Unit) =
+        fun monkeyBusiness(worryCompensator: (Long) -> Long = { it / 3}, setup: MonkeyBusiness.() -> Unit) =
             MonkeyBusiness(worryCompensator).apply { setup() }
 
         fun MonkeyBusiness.monkey(
@@ -78,13 +78,13 @@ data class Monkey(
     val test: (Long) -> Boolean,
     val trueMonkey: MonkeyId,
     val falseMonkey: MonkeyId,
-    val worryCompensator: Boolean,
+    val worryCompensator: (Long) -> Long,
 ) {
 
     fun inspectAndThrowItems(monkeyInspector: MonkeyInspector): List<Pair<MonkeyId, Long>> =
         items.map { item ->
             monkeyInspector.inspect(id, 1)
-            val newWorryLevel = if (worryCompensator) worryLevelOperation(item) / 3 else worryLevelOperation(item)
+            val newWorryLevel = worryCompensator(worryLevelOperation(item))
             if (test(newWorryLevel)) newWorryLevel throwTo trueMonkey
             else newWorryLevel throwTo falseMonkey
         }.also { items.clear() }

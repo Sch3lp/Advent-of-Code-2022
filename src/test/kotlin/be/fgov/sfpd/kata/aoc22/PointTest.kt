@@ -1,6 +1,5 @@
 package be.fgov.sfpd.kata.aoc22
 
-import be.fgov.sfpd.kata.aoc22.Point.RangeToPreference.VectorFirst
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
