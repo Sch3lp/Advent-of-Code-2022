@@ -22,18 +22,21 @@ class Solve {
     @Test
     fun `example input part 2`() {
         val input = readFile("day12/exampleInput.txt")
-        assertThat(solve2(input)).isEqualTo(1)
+        assertThat(solve2(input)).isEqualTo(29)
     }
 
     @Test
     fun `actual input part 2`() {
         val input = readFile("day12/input.txt")
         assertThat(solve2(input))
-            .isGreaterThan(2333)
-            .isEqualTo(2533)
+            .isLessThan(504)
+            .isEqualTo(492)
     }
 
     private fun solve1(input: String): Int = withDebugging(false) { parseToHeightMap(input).bfs() }
 
-    private fun solve2(input: String): Int = TODO()
+    private fun solve2(input: String): Int {
+        val heightMap = parseToHeightMap(input)
+        return heightMap.bfs(to = Elevation('a'))
+    }
 }

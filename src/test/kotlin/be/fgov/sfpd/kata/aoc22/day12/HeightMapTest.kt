@@ -24,46 +24,24 @@ fun parseToHeightMap(input: String) =
     }.toMap())
 
 class HeightMap(private val backingMap: Map<Point, Elevation>) {
-    private val startPoint: Point get() = backingMap.filterValues(Elevation::isStart).keys.first()
     private val endPoint: Point get() = backingMap.filterValues(Elevation::isEnd).keys.first()
 
     /** Breadth First Search **/
-    fun bfs(from: Point = startPoint, to: Point = endPoint): Int {
-        val visitedPoints = mutableSetOf(from)
-        val nextPointsToVisit: ArrayDeque<Step> = ArrayDeque<Step>().apply { add(Step(from, 0)) }
+    fun bfs(to: Elevation = Elevation('S')): Int {
+        val visitedPoints = mutableSetOf(endPoint)
+        val nextPointsToVisit: ArrayDeque<Step> = ArrayDeque<Step>().apply { add(Step(endPoint, 0)) }
         while (nextPointsToVisit.isNotEmpty()) {
             val (currentPoint, stepCounter) = nextPointsToVisit.removeFirst().debug { "Visiting ${it.at}" }
-            if (currentPoint == to) return stepCounter
+            if (backingMap.getValue(currentPoint) == to) return stepCounter
 
             currentPoint.orthogonalNeighbours.filter { neighbour ->
                 val neighbourElevation = backingMap[neighbour]
                 if (neighbourElevation == null || neighbour in visitedPoints) false
-                else backingMap.getValue(currentPoint).to(neighbourElevation) <= 1
+                else neighbourElevation.to(backingMap.getValue(currentPoint)) <= 1
             }.forEach {
                 visitedPoints.add(it)
                 nextPointsToVisit.add(Step(it, stepCounter + 1))
             }
-        }
-        error("No path found")
-    }
-
-    /** Depth First Search **/
-    fun dfs(from: Point = startPoint, to: Point = endPoint): Int {
-        val visitedPoints = mutableSetOf(from)
-        val nextPointsToVisit: ArrayDeque<Step> = ArrayDeque<Step>().apply { add(Step(from, 0)) }
-        while (nextPointsToVisit.isNotEmpty()) {
-            val (currentPoint, stepCount) = nextPointsToVisit.removeFirst()
-            if (currentPoint == to) {
-                return stepCount
-            }
-            val nextOptions = currentPoint.orthogonalNeighbours.filter { neighbour ->
-                val neighbourHeight = backingMap[neighbour]
-                if (neighbourHeight == null) false
-                else backingMap.getValue(currentPoint).to(neighbourHeight) <= 1
-            }.filterNot { it in visitedPoints }
-                .map { Step(it, stepCount + 1) }
-            nextOptions.forEach(nextPointsToVisit::addFirst)
-            visitedPoints.add(currentPoint)
         }
         error("No path found")
     }
