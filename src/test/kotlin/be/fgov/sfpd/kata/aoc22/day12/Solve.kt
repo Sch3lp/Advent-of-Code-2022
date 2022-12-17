@@ -33,10 +33,10 @@ class Solve {
             .isEqualTo(492)
     }
 
-    private fun solve1(input: String): Int = withDebugging(false) { parseToHeightMap(input).bfs() }
+    private fun solve1(input: String): Int = withDebugging(false) { HeightMap(input).bfs() }
 
     private fun solve2(input: String): Int {
-        val heightMap = parseToHeightMap(input)
+        val heightMap = HeightMap(input)
         return heightMap.bfs(to = Elevation('a'))
     }
 }
