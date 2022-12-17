@@ -84,8 +84,9 @@ object Debugging {
         debugEnabled = false
     }
 
-    fun <T> withDebugging(block: () -> T): T {
-        enable()
+
+    fun <T> withDebugging(enabled: Boolean = true, block: () -> T): T {
+        debugEnabled = enabled
         return block().also { disable() }
     }
 }

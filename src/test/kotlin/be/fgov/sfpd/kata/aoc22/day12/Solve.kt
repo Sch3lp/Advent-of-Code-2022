@@ -16,7 +16,7 @@ class Solve {
     @Test
     fun `actual input part 1`() {
         val input = readFile("day12/input.txt")
-        assertThat(solve1(input)).isEqualTo(6023)
+        assertThat(solve1(input)).isEqualTo(497)
     }
 
     @Test
@@ -33,7 +33,7 @@ class Solve {
             .isEqualTo(2533)
     }
 
-    private fun solve1(input: String): Int = withDebugging { parseToGrid(input).bfs() }
+    private fun solve1(input: String): Int = withDebugging(false) { parseToHeightMap(input).bfs() }
 
     private fun solve2(input: String): Int = TODO()
 }

@@ -6,20 +6,19 @@ import be.fgov.sfpd.kata.aoc22.Point
 import be.fgov.sfpd.kata.aoc22.readFile
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
 
 class HeightMapTest {
     @Test
     fun `examle input's bfs returns 31`() {
         val input = readFile("day12/exampleInput.txt")
         withDebugging {
-            val actual = parseToGrid(input).bfs()
+            val actual = parseToHeightMap(input).bfs()
             assertThat(actual).isEqualTo(31)
         }
     }
 }
 
-fun parseToGrid(input: String) =
+fun parseToHeightMap(input: String) =
     HeightMap(input.lines().flatMapIndexed { y, line ->
         line.mapIndexed { x, c -> Point(x, -y) to Elevation(c) }
     }.toMap())
@@ -30,19 +29,20 @@ class HeightMap(private val backingMap: Map<Point, Elevation>) {
 
     /** Breadth First Search **/
     fun bfs(from: Point = startPoint, to: Point = endPoint): Int {
-        val visitedPoints = mutableSetOf<Point>()
-        val nextPointsToVisit: LinkedList<Step> = LinkedList(listOf(Step(from, 0)))
+        val visitedPoints = mutableSetOf(from)
+        val nextPointsToVisit: ArrayDeque<Step> = ArrayDeque<Step>().apply { add(Step(from, 0)) }
         while (nextPointsToVisit.isNotEmpty()) {
-            val (currentPoint, stepCounter) = nextPointsToVisit.poll().debug { "Visiting ${it.at}" }
+            val (currentPoint, stepCounter) = nextPointsToVisit.removeFirst().debug { "Visiting ${it.at}" }
             if (currentPoint == to) return stepCounter
-            visitedPoints.add(currentPoint)
 
-            val nextOptions = currentPoint.orthogonalNeighbours.filter { neighbour ->
+            currentPoint.orthogonalNeighbours.filter { neighbour ->
                 val neighbourElevation = backingMap[neighbour]
                 if (neighbourElevation == null || neighbour in visitedPoints) false
                 else backingMap.getValue(currentPoint).to(neighbourElevation) <= 1
-            }.map { Step(it, stepCounter + 1) }
-            nextPointsToVisit.addAll(nextOptions)
+            }.forEach {
+                visitedPoints.add(it)
+                nextPointsToVisit.add(Step(it, stepCounter + 1))
+            }
         }
         error("No path found")
     }
@@ -50,9 +50,9 @@ class HeightMap(private val backingMap: Map<Point, Elevation>) {
     /** Depth First Search **/
     fun dfs(from: Point = startPoint, to: Point = endPoint): Int {
         val visitedPoints = mutableSetOf(from)
-        val nextPointsToVisit: LinkedList<Step> = LinkedList(listOf(Step(from, 1)))
+        val nextPointsToVisit: ArrayDeque<Step> = ArrayDeque<Step>().apply { add(Step(from, 0)) }
         while (nextPointsToVisit.isNotEmpty()) {
-            val (currentPoint, stepCount) = nextPointsToVisit.poll()
+            val (currentPoint, stepCount) = nextPointsToVisit.removeFirst()
             if (currentPoint == to) {
                 return stepCount
             }
@@ -62,7 +62,7 @@ class HeightMap(private val backingMap: Map<Point, Elevation>) {
                 else backingMap.getValue(currentPoint).to(neighbourHeight) <= 1
             }.filterNot { it in visitedPoints }
                 .map { Step(it, stepCount + 1) }
-            nextOptions.forEach(nextPointsToVisit::push)
+            nextOptions.forEach(nextPointsToVisit::addFirst)
             visitedPoints.add(currentPoint)
         }
         error("No path found")
