@@ -1,5 +1,6 @@
 package be.fgov.sfpd.kata.aoc22.day12
 
+import be.fgov.sfpd.kata.aoc22.Debugging.withDebugging
 import be.fgov.sfpd.kata.aoc22.readFile
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -32,7 +33,7 @@ class Solve {
             .isEqualTo(2533)
     }
 
-    private fun solve1(input: String): Int = TODO()
+    private fun solve1(input: String): Int = withDebugging { parseToGrid(input).bfs() }
 
     private fun solve2(input: String): Int = TODO()
 }

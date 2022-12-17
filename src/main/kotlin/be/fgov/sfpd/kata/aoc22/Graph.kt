@@ -14,6 +14,9 @@ data class Edge<T : Node>(val first: T, val second: T) {
 
 class Graph<T: Node>(val edgeList: List<Edge<T>>) {
 
+    val startNode: T = edgeList.first { it.first.isStart() }.first
+    val endNode: T = edgeList.first { it.first.isEnd() }.first
+
     private val uniqueNodes = edgeList.flatMap { edge -> edge.toList() }.toSet()
     private val adjacencyList: Map<Node, List<Edge<T>>> by lazy {
         val directedEdges = edgeList.groupBy { edge -> edge.first }
@@ -31,7 +34,7 @@ class Graph<T: Node>(val edgeList: List<Edge<T>>) {
 
     private fun neighboursOf(node: Node) = adjacencyList[node]?.map { it.second } ?: emptyList()
 
-    fun findAllPaths(from: Node, to: Node): List<Path> {
+    fun findAllPaths(from: Node = startNode, to: Node = endNode): List<Path> {
         return dfs(from, to, visited, path = mutableListOf(from), paths = mutableListOf())
     }
 
